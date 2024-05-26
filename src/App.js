@@ -2,10 +2,10 @@ import AddPostForm from './features/post/AddPostForm'
 import PostsList from './features/post/PostsList'
 import SinglePostPage from './features/post/SinglePostPage'
 import EditPostForm from './features/post/EditPostForm'
-import UsersList from './features/users/UsersList'
-import UserPage from './features/users/UserPage'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Layout from "./components/Layout"
+import TagsList from './features/tags/TagsList'
+import TagPage from './features/tags/TagPage'
 
 function App() {
   return (
@@ -17,9 +17,9 @@ function App() {
           <Route path=":postId" element={<SinglePostPage />}/>
           <Route path="edit/:postId" element={<EditPostForm />}/>
         </Route>
-        <Route path="user">
-          <Route index element={<UsersList />} />
-          <Route path=':userId' element={<UserPage />} />
+        <Route path="tag">
+          <Route index element={<TagsList />} />
+          <Route path=':tagName' element={<TagPage />} />
         </Route>
 
         {/* Catch all, replace with 404 */}

@@ -1,32 +1,32 @@
 import { Link } from 'react-router-dom'
-import { useGetUsersQuery } from './usersSlice'
+import { useGetTagsQuery } from './tagsSlice';
 
-const UsersList = () => {
+const TagsList = () => {
 
     const {
-        data: users,
+        data: tags,
         isLoading,
         isSuccess,
         isError,
         error
-    } = useGetUsersQuery('getUsers')
+    } = useGetTagsQuery('getTags')
 
     let content;
     if (isLoading) {
         content = <p>"Loading..."</p>;
     } else if (isSuccess) {
 
-        const renderedUsers = users.ids.map(userId => (
-            <li key={userId}>
-                <Link to={`/user/${userId}`}>{users.entities[userId].name}</Link>
+        const renderedTags = tags.ids.map(tagId => (
+            <li key={tagId}>
+                <Link to={`/tag/${tags.entities[tagId].name}`}>{tags.entities[tagId].name}</Link>
             </li>
         ))
 
         content = (
             <section>
-                <h2>Users</h2>
+                <h2>Tags</h2>
 
-                <ul>{renderedUsers}</ul>
+                <ul>{renderedTags}</ul>
             </section>
         )
     } else if (isError) {
@@ -36,4 +36,4 @@ const UsersList = () => {
     return content
 }
 
-export default UsersList
+export default TagsList

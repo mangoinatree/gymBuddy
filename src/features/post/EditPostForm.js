@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useGetPostsQuery } from './postsSlice';
 import { useUpdatePostMutation, useDeletePostMutation } from "./postsSlice";
-import { useGetUsersQuery } from '../users/usersSlice';
+import { useGetTagsQuery, useAddTagMutation } from '../tags/tagsSlice';
 
 const EditPostForm = () => {
     const { postId } = useParams()
@@ -10,6 +10,8 @@ const EditPostForm = () => {
 
     const [updatePost, { isLoading }] = useUpdatePostMutation()
     const [deletePost] = useDeletePostMutation()
+    const [addTag] = useAddTagMutation()
+
 
     const { post, isLoading: isLoadingPosts, isSuccess } = useGetPostsQuery('getPosts', {
         selectFromResult: ({ data, isLoading, isSuccess }) => ({
@@ -19,19 +21,40 @@ const EditPostForm = () => {
         }),
     })
 
-    const { data: users, isSuccess: isSuccessUsers } = useGetUsersQuery('getUsers')
+    
 
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
-    const [userId, setUserId] = useState('')
+    const [tags, setTags] = useState([])
+
+    const {
+        data: existingTags,
+    } = useGetTagsQuery('getTags')
+
+    function handleKeyDown(e){
+        if(e.key !== 'Enter') return 
+        const value = e.target.value.trim().toLowerCase()
+        if(!value) return 
+        setTags([...tags, value])
+        e.target.value = ''
+        const isExistingTag = existingTags.ids.some(tagId => existingTags.entities[tagId].name === value);
+        if (!isExistingTag) {
+            addTag(value);
+        }
+    }
+
+    function removeTag(index){
+        setTags(tags.filter((el, i) => i !== index))
+
+    }
 
     useEffect(() => {
         if (isSuccess) {
             setTitle(post.title)
             setContent(post.body)
-            setUserId(post.userId)
+            setTags(post.tags)
         }
-    }, [isSuccess, post?.title, post?.body, post?.userId])
+    }, [isSuccess, post?.title, post?.body, post?.tags])
 
     if (isLoadingPosts) return <p>Loading...</p>
 
@@ -43,20 +66,20 @@ const EditPostForm = () => {
         )
     }
 
+    
+
     const onTitleChanged = e => setTitle(e.target.value)
     const onContentChanged = e => setContent(e.target.value)
-    const onAuthorChanged = e => setUserId(Number(e.target.value))
 
-    const canSave = [title, content, userId].every(Boolean) && !isLoading;
+    const canSave = [title, content].every(Boolean) && !isLoading;
 
     const onSavePostClicked = async () => {
         if (canSave) {
             try {
-                await updatePost({ id: post?.id, title, body: content, userId }).unwrap()
+                await updatePost({ id: post?.id, title, body: content, tags}).unwrap()
 
                 setTitle('')
                 setContent('')
-                setUserId('')
                 navigate(`/post/${postId}`)
             } catch (err) {
                 console.error('Failed to save the post', err)
@@ -64,15 +87,6 @@ const EditPostForm = () => {
         }
     }
 
-    let usersOptions
-    if (isSuccessUsers) {
-        usersOptions = users.ids.map(id => (
-            <option
-                key={id}
-                value={id}
-            >{users.entities[id].name}</option>
-        ))
-    }
 
     const onDeletePostClicked = async () => {
         try {
@@ -80,7 +94,6 @@ const EditPostForm = () => {
 
             setTitle('')
             setContent('')
-            setUserId('')
             navigate('/')
         } catch (err) {
             console.error('Failed to delete the post', err)
@@ -99,11 +112,6 @@ const EditPostForm = () => {
                     value={title}
                     onChange={onTitleChanged}
                 />
-                <label htmlFor="postAuthor">Author:</label>
-                <select id="postAuthor" value={userId} onChange={onAuthorChanged}>
-                    <option value=""></option>
-                    {usersOptions}
-                </select>
                 <label htmlFor="postContent">Content:</label>
                 <textarea
                     id="postContent"
@@ -111,6 +119,23 @@ const EditPostForm = () => {
                     value={content}
                     onChange={onContentChanged}
                 />
+                <label>Enter some tags: </label>
+                <div className='tags-input-container'>  
+                    { tags.map((tag, index) => (
+                        <div className='tag-item' key={index}>
+                            <span className='text'>{tag}</span>
+                            <span 
+                                className='close' 
+                                onClick={() => removeTag(index)}
+                            >&times;</span>
+                        </div>
+                    ))}
+                    <input 
+                        type='text'
+                        className='tags-input'
+                        onKeyDown={handleKeyDown}
+                    ></input>
+                </div>
                 <button
                     type="button"
                     onClick={onSavePostClicked}
