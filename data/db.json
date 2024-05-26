@@ -69,17 +69,29 @@
       "tags": [
         "bicep"
       ],
-      "date": "2024-05-24T19:36:08.752Z"
+      "file": "blob:http://localhost:3000/6fdba9d7-a722-4dfa-a40f-a14294844e69",
+      "date": "2024-05-26T22:07:54.187Z"
     },
     {
       "id": "db0d",
       "title": "Checking EditPostForm",
-      "body": "akdfm ad",
+      "body": "Making this post longer than 75 characters alalalalalalal, i gues that was not enough ???????????",
       "tags": [
         "tag1",
         "summer24"
       ],
-      "date": "2024-05-26T20:24:52.520Z"
+      "file": "blob:http://localhost:3000/65769e3b-8530-4582-83f0-72c5179c13a6",
+      "date": "2024-05-26T22:06:45.044Z"
+    },
+    {
+      "id": "8284",
+      "title": "Trying to save an image",
+      "body": "asdmfnkajds",
+      "tags": [
+        "image"
+      ],
+      "file": "blob:http://localhost:3000/7abec584-3e94-412f-94f5-e040e704ae82",
+      "date": "2024-05-26T22:04:18.215Z"
     }
   ],
   "tags": [
@@ -114,6 +126,10 @@
     {
       "id": "2b84",
       "name": "summer24"
+    },
+    {
+      "id": "183e",
+      "name": "image"
     }
   ]
 }

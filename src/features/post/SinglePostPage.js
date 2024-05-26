@@ -26,7 +26,15 @@ const SinglePostPage = () => {
     return (
         <article>
             <h2>{post.title}</h2>
+            <div>
+                {post.file && <img src={post.file} alt="uploaded"></img>}
+            </div>
             <p>{post.body}</p>
+            <ol>
+                {post.tags && post.tags.map((tag, index) => (
+                    <li key={index}>{tag}</li>
+                ))}
+            </ol>
             <p className="postCredit">
                 <Link to={`/post/edit/${post.id}`}>Edit Post</Link>
                 <TimeAgo timestamp={post.date} />

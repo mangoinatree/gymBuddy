@@ -11,6 +11,7 @@ const EditPostForm = () => {
     const [updatePost, { isLoading }] = useUpdatePostMutation()
     const [deletePost] = useDeletePostMutation()
     const [addTag] = useAddTagMutation()
+   
 
 
     const { post, isLoading: isLoadingPosts, isSuccess } = useGetPostsQuery('getPosts', {
@@ -26,6 +27,12 @@ const EditPostForm = () => {
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
     const [tags, setTags] = useState([])
+    const [file, setFile] = useState(null)
+
+    function handleChange(e) {
+        console.log(e.target.files);
+        setFile(URL.createObjectURL(e.target.files[0]))
+    }
 
     const {
         data: existingTags,
@@ -53,8 +60,9 @@ const EditPostForm = () => {
             setTitle(post.title)
             setContent(post.body)
             setTags(post.tags)
+            setFile(post.file)
         }
-    }, [isSuccess, post?.title, post?.body, post?.tags])
+    }, [isSuccess, post?.title, post?.body, post?.tags, post?.file])
 
     if (isLoadingPosts) return <p>Loading...</p>
 
@@ -76,7 +84,7 @@ const EditPostForm = () => {
     const onSavePostClicked = async () => {
         if (canSave) {
             try {
-                await updatePost({ id: post?.id, title, body: content, tags}).unwrap()
+                await updatePost({ id: post?.id, title, body: content, tags, file}).unwrap()
 
                 setTitle('')
                 setContent('')
@@ -136,6 +144,13 @@ const EditPostForm = () => {
                         onKeyDown={handleKeyDown}
                     ></input>
                 </div>
+
+                <label>Add Image:</label>
+                <div>
+                    {file && <img src={post.file} alt="uploaded"></img>}
+                </div>
+                <input type="file" onChange={handleChange} />
+
                 <button
                     type="button"
                     onClick={onSavePostClicked}

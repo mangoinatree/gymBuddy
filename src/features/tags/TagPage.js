@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import React from 'react'
 import { useGetPostsQuery } from '../post/postsSlice'
+import TimeAgo from '../post/TimeAgo'
 
 
 const TagPage = () => {
@@ -33,7 +34,10 @@ const TagPage = () => {
                     <ol>
                         {filteredPosts.map(id => (
                             <li key={id}>
-                                <Link to={`/post/${id}`}>{entities[id].title}</Link>
+                                <Link to={`/post/${id}`}>
+                                    {entities[id].title}
+                                </Link>
+                                <TimeAgo timestamp={entities[id].date} />
                             </li>
                         ))}
                     </ol>

@@ -13,7 +13,12 @@ const AddPostForm = () => {
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
     const [tags, setTags] = useState([])
-    
+    const [file, setFile] = useState()
+
+    function handleChange(e) {
+        console.log(e.target.files);
+        setFile(URL.createObjectURL(e.target.files[0]))
+    }
     const {
         data: existingTags,
     } = useGetTagsQuery('getTags')
@@ -44,7 +49,7 @@ const AddPostForm = () => {
     const onSavePostClicked = async () => {
         if (canSave) {
             try {
-                await addNewPost({ title, body: content , tags}).unwrap()
+                await addNewPost({ title, body: content , tags, file}).unwrap()
 
                 setTitle('')
                 setContent('')
@@ -93,6 +98,11 @@ const AddPostForm = () => {
                         onKeyDown={handleKeyDown}
                     ></input>
                 </div>
+
+                <label>Add Image:</label>
+                <img src={file} alt="uploaded"/>
+                <input type="file" onChange={handleChange} />
+
                 <button
                     type="button"
                     onClick={onSavePostClicked}
