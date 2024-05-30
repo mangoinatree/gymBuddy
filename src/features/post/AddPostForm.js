@@ -13,11 +13,38 @@ const AddPostForm = () => {
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
     const [tags, setTags] = useState([])
-    const [file, setFile] = useState()
+    const [image, setImage] = useState({
+        preview: '',
+        raw: '',
+      });
+    
 
-    function handleChange(e) {
-        console.log(e.target.files);
-        setFile(URL.createObjectURL(e.target.files[0]))
+    function handleImageChange(e) {
+        if (e.target.files.length) {
+            const rawImage = e.target.files[0];
+    
+            const reader = new FileReader();
+    
+            reader.onload = function(event) {
+                // Convert image data to base64
+                const base64Data = event.target.result;
+    
+                // Set base64 data to the 'raw' key
+                setImage({
+                    preview: URL.createObjectURL(rawImage),
+                    raw: base64Data
+                });
+            };
+    
+            // Read the file as data URL (base64)
+            reader.readAsDataURL(rawImage);
+        } else {
+            // If no image is selected, reset the image state
+            setImage({
+                preview: '', // Reset preview to an empty string
+                raw: '',
+            });
+        }
     }
     const {
         data: existingTags,
@@ -49,7 +76,9 @@ const AddPostForm = () => {
     const onSavePostClicked = async () => {
         if (canSave) {
             try {
-                await addNewPost({ title, body: content , tags, file}).unwrap()
+                let formData = new FormData();
+                formData.append('image', image.raw)
+                await addNewPost({ title, body: content , tags, image: image.raw}).unwrap()
 
                 setTitle('')
                 setContent('')
@@ -100,8 +129,15 @@ const AddPostForm = () => {
                 </div>
 
                 <label>Add Image:</label>
-                <img src={file} alt="uploaded"/>
-                <input type="file" onChange={handleChange} />
+                <img 
+                    src={image.preview} 
+                    alt="dummy"
+                />
+                <input 
+                    name="image"
+                    type="file" 
+                    onChange={handleImageChange} 
+                />
 
                 <button
                     type="button"

@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom'
 import React from 'react'
 import { useGetPostsQuery } from '../post/postsSlice'
 import TimeAgo from '../post/TimeAgo'
+import styles from './tagPage.module.css'
 
 
 const TagPage = () => {
@@ -13,7 +14,7 @@ const TagPage = () => {
         isSuccess,
         isError,
         error
-    } = useGetPostsQuery('getPosts');
+    } = useGetPostsQuery('getPosts')
 
 
 
@@ -29,15 +30,18 @@ const TagPage = () => {
             content = <p>No posts found for {tagName}</p>;
         } else{
             content = (
-                <section>
-                    <h2>{tagName}</h2>
-                    <ol>
+                <section className={styles.container}>
+                    <h2 className={styles.title}>#{tagName}</h2>
+                    <ol className={styles.postList}>
                         {filteredPosts.map(id => (
-                            <li key={id}>
+                            <li key={id} className={styles.listItem}>
                                 <Link to={`/post/${id}`}>
                                     {entities[id].title}
                                 </Link>
-                                <TimeAgo timestamp={entities[id].date} />
+                                <p className={styles.time}>
+                                   <TimeAgo timestamp={entities[id].date} /> 
+                                </p>
+                                
                             </li>
                         ))}
                     </ol>

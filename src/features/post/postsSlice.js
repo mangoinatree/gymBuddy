@@ -64,7 +64,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
     })
 })
 
-export { postsAdapter };
 
 export const {
     useGetPostsQuery,

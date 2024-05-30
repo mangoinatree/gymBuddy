@@ -2,6 +2,8 @@ import TimeAgo from "./TimeAgo";
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useGetPostsQuery } from "./postsSlice";
+import styles from './postExcerpt.module.css'
+import React from "react";
 
 const SinglePostPage = () => {
     const { postId } = useParams()
@@ -24,18 +26,22 @@ const SinglePostPage = () => {
     }
 
     return (
-        <article>
-            <h2>{post.title}</h2>
-            <div>
-                {post.file && <img src={post.file} alt="uploaded"></img>}
+        <article className={styles.post}>
+            <div className={styles.postText}>
+                <h2 className={styles.title}>{post.title}</h2>
+                <p>{post.body}</p>
+                <p className={styles.tags}>
+                    {post.tags && post.tags.map((tag, index) => (
+                        <React.Fragment key={index}>
+                            #{tag} {index !== post.tags.length - 1 && ' '}
+                        </React.Fragment>
+                    ))}
+                </p>
             </div>
-            <p>{post.body}</p>
-            <ol>
-                {post.tags && post.tags.map((tag, index) => (
-                    <li key={index}>{tag}</li>
-                ))}
-            </ol>
-            <p className="postCredit">
+            <div>
+                {post.image && <img src={post.image} alt="uploaded"></img>}
+            </div>
+            <p className={styles.postCredit}>
                 <Link to={`/post/edit/${post.id}`}>Edit Post</Link>
                 <TimeAgo timestamp={post.date} />
             </p>

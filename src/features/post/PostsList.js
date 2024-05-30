@@ -1,5 +1,6 @@
 import PostsExcerpt from "./PostsExcerpt";
 import { useGetPostsQuery } from './postsSlice';
+import QuotesPage from '../quotes/QuotePage'
 
 const PostsList = () => {
     const {
@@ -21,6 +22,7 @@ const PostsList = () => {
 
     return (
         <section>
+            <QuotesPage />
             {content}
         </section>
     )
