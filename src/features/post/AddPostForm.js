@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAddNewPostMutation } from "./postsSlice";
-import { useGetTagsQuery, useAddTagMutation } from "../tags/tagsSlice";
+import { useGetTagsQuery, useAddTagMutation } from "../tags/tagsSlice"
+import styles from './postForm.module.css'
 
 const AddPostForm = () => {
     const [addNewPost, { isLoading }] = useAddNewPostMutation()
@@ -78,8 +79,8 @@ const AddPostForm = () => {
             try {
                 let formData = new FormData();
                 formData.append('image', image.raw)
-                await addNewPost({ title, body: content , tags, image: image.raw}).unwrap()
-
+                const newPostData = await addNewPost({ title, body: content , tags, image: image.raw}).unwrap()
+                console.log(newPostData)
                 setTitle('')
                 setContent('')
                 setTags([])
@@ -93,24 +94,23 @@ const AddPostForm = () => {
 
     return (
         <section>
-            <h2>Add a New Post</h2>
             <form>
-                <label htmlFor="postTitle">Post Title:</label>
+                <h3 className={styles.title}>new post</h3>
                 <input
                     type="text"
                     id="postTitle"
                     name="postTitle"
                     value={title}
                     onChange={onTitleChanged}
+                    placeholder="title"
                 />
-                <label htmlFor="postContent">Content:</label>
                 <textarea
                     id="postContent"
                     name="postContent"
                     value={content}
                     onChange={onContentChanged}
+                    placeholder="description..."
                 />
-                <label>Enter some tags: </label>
                 <div className='tags-input-container'>  
                     { tags.map((tag, index) => (
                         <div className='tag-item' key={index}>
@@ -123,16 +123,17 @@ const AddPostForm = () => {
                     ))}
                     <input 
                         type='text'
-                        className='tags-input'
+                        className={styles.tagInput}
                         onKeyDown={handleKeyDown}
+                        placeholder="#tag"
                     ></input>
                 </div>
 
                 <label>Add Image:</label>
-                <img 
+                {image.preview && <img 
                     src={image.preview} 
-                    alt="dummy"
-                />
+                    alt="none"
+                />}
                 <input 
                     name="image"
                     type="file" 
@@ -141,9 +142,10 @@ const AddPostForm = () => {
 
                 <button
                     type="button"
+                    className={styles.saveButton}
                     onClick={onSavePostClicked}
                     disabled={!canSave}
-                >Save Post</button>
+                >Post</button>
             </form>
         </section>
     )

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { useGetTagsQuery } from './tagsSlice';
+import { useGetTagsQuery } from './tagsSlice'
+import styles from './tagsList.module.css'
 
 const TagsList = () => {
 
@@ -17,16 +18,15 @@ const TagsList = () => {
     } else if (isSuccess) {
 
         const renderedTags = tags.ids.map(tagId => (
-            <li key={tagId}>
+
+            <li key={tagId} className={styles.listItem}>
                 <Link to={`/tag/${tags.entities[tagId].name}`}>{tags.entities[tagId].name}</Link>
             </li>
         ))
 
         content = (
-            <section>
-                <h2>Tags</h2>
-
-                <ul>{renderedTags}</ul>
+            <section className={styles.container}>
+                <ul className={styles.tagList}>{renderedTags}</ul>
             </section>
         )
     } else if (isError) {

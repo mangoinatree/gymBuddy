@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useGetPostsQuery } from './postsSlice';
 import { useUpdatePostMutation, useDeletePostMutation } from "./postsSlice";
-import { useGetTagsQuery, useAddTagMutation } from '../tags/tagsSlice';
+import { useGetTagsQuery, useAddTagMutation } from '../tags/tagsSlice'
+import styles from './postForm.module.css'
 
 const EditPostForm = () => {
     const { postId } = useParams()
@@ -11,7 +12,7 @@ const EditPostForm = () => {
     const [updatePost, { isLoading }] = useUpdatePostMutation()
     const [deletePost] = useDeletePostMutation()
     const [addTag] = useAddTagMutation()
-   
+
 
 
     const { post, isLoading: isLoadingPosts, isSuccess } = useGetPostsQuery('getPosts', {
@@ -22,7 +23,7 @@ const EditPostForm = () => {
         }),
     })
 
-    
+
 
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
@@ -30,25 +31,25 @@ const EditPostForm = () => {
     const [image, setImage] = useState({
         preview: '',
         raw: '',
-      });
+    });
 
     function handleImageChange(e) {
         if (e.target.files.length) {
             const rawImage = e.target.files[0];
-    
+
             const reader = new FileReader();
-    
-            reader.onload = function(event) {
+
+            reader.onload = function (event) {
                 // Convert image data to base64
                 const base64Data = event.target.result;
-    
+
                 // Set base64 data to the 'raw' key
                 setImage({
                     preview: URL.createObjectURL(rawImage),
                     raw: base64Data
                 });
             };
-    
+
             // Read the file as data URL (base64)
             reader.readAsDataURL(rawImage);
         } else {
@@ -64,10 +65,10 @@ const EditPostForm = () => {
         data: existingTags,
     } = useGetTagsQuery('getTags')
 
-    function handleKeyDown(e){
-        if(e.key !== 'Enter') return 
+    function handleKeyDown(e) {
+        if (e.key !== 'Enter') return
         const value = e.target.value.trim().toLowerCase()
-        if(!value) return 
+        if (!value) return
         setTags([...tags, value])
         e.target.value = ''
         const isExistingTag = existingTags.ids.some(tagId => existingTags.entities[tagId].name === value);
@@ -76,7 +77,7 @@ const EditPostForm = () => {
         }
     }
 
-    function removeTag(index){
+    function removeTag(index) {
         setTags(tags.filter((el, i) => i !== index))
 
     }
@@ -88,11 +89,11 @@ const EditPostForm = () => {
             setTags(post.tags)
             if (post.image) {
                 setImage({
-                    preview: post.image.preview || '', // Add additional check for image preview
+                    preview: post.image.preview || '',
                     raw: post.image.raw || '',
                 });
             }
-            
+
         }
     }, [isSuccess, post?.title, post?.body, post?.tags, post?.image])
 
@@ -106,7 +107,7 @@ const EditPostForm = () => {
         )
     }
 
-    
+
 
     const onTitleChanged = e => setTitle(e.target.value)
     const onContentChanged = e => setContent(e.target.value)
@@ -116,7 +117,7 @@ const EditPostForm = () => {
     const onSavePostClicked = async () => {
         if (canSave) {
             try {
-                await updatePost({ id: post?.id, title, body: content, tags, image: image.raw}).unwrap()
+                await updatePost({ id: post?.id, title, body: content, tags, image }).unwrap()
 
                 setTitle('')
                 setContent('')
@@ -140,62 +141,77 @@ const EditPostForm = () => {
         }
     }
 
+    const onCancelClicked = () => {
+        navigate(-1); // Go back to the previous page
+    };
+
     return (
         <section>
-            <h2>Edit Post</h2>
             <form>
-                <label htmlFor="postTitle">Post Title:</label>
+                <h3 className={styles.title}>edit post</h3>
                 <input
                     type="text"
                     id="postTitle"
                     name="postTitle"
                     value={title}
                     onChange={onTitleChanged}
+                    placeholder='title'
                 />
-                <label htmlFor="postContent">Content:</label>
                 <textarea
                     id="postContent"
                     name="postContent"
                     value={content}
                     onChange={onContentChanged}
+                    placeholder='description...'
                 />
-                <label>Enter some tags: </label>
-                <div className='tags-input-container'>  
-                    { tags.map((tag, index) => (
+                <div className='tags-input-container'>
+                    {tags.map((tag, index) => (
                         <div className='tag-item' key={index}>
                             <span className='text'>{tag}</span>
-                            <span 
-                                className='close' 
+                            <span
+                                className='close'
                                 onClick={() => removeTag(index)}
                             >&times;</span>
                         </div>
                     ))}
-                    <input 
+                    <input
                         type='text'
-                        className='tags-input'
+                        className={styles.tagInput}
                         onKeyDown={handleKeyDown}
+                        placeholder='#tag'
                     ></input>
                 </div>
 
                 <label>Add Image:</label>
-                <img 
-                    src={image.preview} 
-                    alt="dummy"
-                />
-                <input 
+                {<img
+                    src={image.raw}
+                    alt="none"
+                />}
+                <input
                     name="image"
-                    type="file" 
-                    onChange={handleImageChange} 
+                    type="file"
+                    onChange={handleImageChange}
                 />
+                <div className={styles.cancelSave}>
+                    <button
+                        type="button"
+                        onClick={onSavePostClicked}
+                        disabled={!canSave}
+                        className={styles.saveButton}
 
-                <button
-                    type="button"
-                    onClick={onSavePostClicked}
-                    disabled={!canSave}
-                >
-                    Save Post
-                </button>
-                <button className="deleteButton"
+                    >
+                        Save
+                    </button>
+                    <button
+                        type="button"
+                        onClick={onCancelClicked}
+                        className={styles.cancelButton}
+                    >
+                        Cancel
+                    </button>
+                </div>
+
+                <button className={styles.deleteButton}
                     type="button"
                     onClick={onDeletePostClicked}
                 >

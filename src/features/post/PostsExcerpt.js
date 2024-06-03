@@ -41,7 +41,8 @@ const PostsExcerpt = ({ postId }) => {
                 <p className={styles.tags}>
                     {post.tags && post.tags.map((tag, index) => (
                         <React.Fragment key={index}>
-                            #{tag} {index !== post.tags.length - 1 && ' '}
+                            <Link to={`tag/${tag}`}>#{tag}</Link>
+                            {index !== post.tags.length - 1 && ' '}
                         </React.Fragment>
                     ))}
                 </p>
@@ -49,7 +50,7 @@ const PostsExcerpt = ({ postId }) => {
             </div>
 
             <div>
-                {post.image && <img src={post.image} alt="uploaded"></img>}
+                {post.image && <img src={post.image.raw} alt="uploaded"></img>}
             </div>
 
 

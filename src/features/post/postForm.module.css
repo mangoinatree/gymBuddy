@@ -1,0 +1,55 @@
+form {
+    background-color: white;
+    padding: 3%;
+    border-radius: 5px;
+    box-shadow: 0 0px 10px -5px rgb(80, 70, 70);
+}
+
+input, textarea {
+    padding: 1%;
+    border-radius: 5px;
+}
+
+input {
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.tagInput {
+    font-weight: 100;
+    font-size: 20px;
+}
+
+.title {
+    align-self: center;
+}
+
+.cancelSave{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+}
+.saveButton {
+    background-color: rgb(69, 216, 99);
+    width: 48%;
+    align-self: flex-end;
+    padding: 1%;
+    border-radius: 7px;
+    border: none;
+}
+.cancelButton {
+    background-color: whitesmoke;
+    width: 48%;
+    align-self: flex-start;
+    padding: 1%;
+    border-radius: 7px;
+    border: none;
+}
+
+.deleteButton{
+    padding: 1%;
+    border-radius: 7px;
+    border: none;
+    background-color: palevioletred;
+}
+

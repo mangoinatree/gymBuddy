@@ -6,7 +6,7 @@
 
 html {
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
-  background-color: white;
+  background-color: whitesmoke;
   color: #000;
 }
 #root {
@@ -45,6 +45,7 @@ main{
 }
 
 section {
+  height: 100vh;
   margin-top: 1em;
   margin-left: 5%;
   margin-right: 5%;
@@ -75,16 +76,18 @@ form {
 }
 
 textarea {
-  height: 200px;
+  height: 100px;
 }
 
+button:hover {
+  cursor: pointer;
+}
 
 .excerpt {
   font-style: italic;
 }
 
-.deleteButton {
-  background-color: palevioletred;
-  color: white;
-}
 
+a:hover{
+  color: rgb(29, 145, 240);
+}
