@@ -11,7 +11,8 @@ export const tagsApiSlice = apiSlice.injectEndpoints({
         getTags: builder.query({
             query: () => '/tags',
             transformResponse: responseData => {
-                return tagsAdapter.setAll(initialState, responseData)
+                const sortedTags = responseData.sort((a, b) => a.name.localeCompare(b.name));
+                return tagsAdapter.setAll(initialState, sortedTags)
             },
             providesTags: (result, error, arg) => [
                 { type: 'Tag', id: "LIST" },
