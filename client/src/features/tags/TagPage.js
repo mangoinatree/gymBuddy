@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import React from 'react'
-import { useGetPostsQuery } from '../post/postsSlice'
+import { useGetPostsQuery } from '../post/postsApiSlice'
 import TimeAgo from '../post/TimeAgo'
 import styles from './tagPage.module.css'
 

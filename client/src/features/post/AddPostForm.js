@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAddNewPostMutation } from "./postsSlice";
-import { useGetTagsQuery, useAddTagMutation } from "../tags/tagsSlice"
+import { useAddNewPostMutation } from "./postsApiSlice";
+import { useGetTagsQuery, useAddTagMutation } from "../tags/tagsApiSlice"
 import styles from './postForm.module.css'
 
 const AddPostForm = () => {
@@ -75,11 +75,10 @@ const AddPostForm = () => {
     const canSave = [title, content].every(Boolean) && tags.length > 0 && !isLoading;
 
     const onSavePostClicked = async () => {
+        
         if (canSave) {
             try {
-                let formData = new FormData();
-                formData.append('image', image.raw)
-                const newPostData = await addNewPost({ title, body: content , tags, image: image.raw}).unwrap()
+                const newPostData = await addNewPost({ title, body: content , tags}).unwrap()
                 console.log(newPostData)
                 setTitle('')
                 setContent('')

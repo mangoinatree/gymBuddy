@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useGetPostsQuery } from './postsSlice';
-import { useUpdatePostMutation, useDeletePostMutation } from "./postsSlice";
-import { useGetTagsQuery, useAddTagMutation } from '../tags/tagsSlice'
+import { useGetPostsQuery } from './postsApiSlice';
+import { useUpdatePostMutation, useDeletePostMutation } from "./postsApiSlice";
+import { useGetTagsQuery, useAddTagMutation } from '../tags/tagsApiSlice'
 import styles from './postForm.module.css'
 
 const EditPostForm = () => {

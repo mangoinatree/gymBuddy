@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useGetTagsQuery } from './tagsSlice'
+import { useGetTagsQuery } from './tagsApiSlice'
 import styles from './tagsList.module.css'
 
 const TagsList = () => {

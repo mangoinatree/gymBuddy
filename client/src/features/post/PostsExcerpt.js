@@ -1,6 +1,6 @@
 import TimeAgo from "./TimeAgo";
 import { Link } from 'react-router-dom';
-import { useGetPostsQuery } from './postsSlice'
+import { useGetPostsQuery } from './postsApiSlice'
 import { useState } from "react";
 import styles from './postExcerpt.module.css'
 import React from "react";
