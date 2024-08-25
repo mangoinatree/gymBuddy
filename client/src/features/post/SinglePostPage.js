@@ -40,7 +40,7 @@ const SinglePostPage = () => {
                 </p>
             </div>
             <div>
-                {post.image && <img src={post.image.raw} alt="uploaded"></img>}
+                {post.filePath && <img src={`http://localhost:3500${post.filePath.replace('/public', '')}`} alt="uploaded"></img>}
             </div>
             <p className={styles.postCredit}>
                 <Link to={`/post/edit/${post.id}`}>Edit Post</Link>

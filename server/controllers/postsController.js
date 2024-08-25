@@ -1,6 +1,6 @@
-const User = require('../models/User')
 const Post = require('../models/Post')
-const asyncHandler = require('express-async-handler') // keeps us from using so many try catch blocks 
+const asyncHandler = require('express-async-handler') // keeps us from using so many try catch blocks
+
 
 // @desc Get all posts 
 // @route GET /posts
@@ -17,14 +17,14 @@ const getAllPosts = asyncHandler(async (req, res) => {
 // @route POST /posts
 // @access Private 
 const createNewPost = asyncHandler(async (req, res) => {
-    const { user, title, body, tags } = req.body
-
+    const { title, body, tags } = req.body
+    const file = req.file
     //Confirming data
-    if (!user || !title || !body || !tags || !Array.isArray(tags) || !tags.length) {
+    if (!title || !body || !tags) {
         return res.status(400).json({ message: 'All fields are required'})
     }
 
-    const postObject = { user, title, body, tags}
+    const postObject = { title, body, tags: JSON.parse(tags), filePath: file ? `/images/${file.filename}` : null}
 
     // Create and store new post
     const post = await Post.create(postObject)
@@ -40,10 +40,10 @@ const createNewPost = asyncHandler(async (req, res) => {
 // @route PATCH /post
 // @access Private 
 const updatePost = asyncHandler(async (req, res) => {
-    const { id, user, title, body, tags } = req.body 
+    const { id, title, body, tags } = req.body 
 
     // Confirming data
-    if(!user || !title || !body || !tags || !Array.isArray(tags) || !tags.length) {
+    if(!title || !body || !tags || !Array.isArray(tags) || !tags.length) {
         return res.status(400).json({ message: 'All fields are required'})
     }
 
@@ -51,7 +51,6 @@ const updatePost = asyncHandler(async (req, res) => {
     if (!post) {
         return res.status(400).json({ message: 'Post not found'})
     } 
-    post.user = user
     post.title = title
     post.body = body 
     post.tags = tags 

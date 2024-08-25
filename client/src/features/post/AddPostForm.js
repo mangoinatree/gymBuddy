@@ -14,42 +14,13 @@ const AddPostForm = () => {
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
     const [tags, setTags] = useState([])
-    const [image, setImage] = useState({
-        preview: '',
-        raw: '',
-      });
-    
+    const [file, setFile] = useState(null)
+    const [previewUrl, setPreviewUrl] = useState(null)
 
-    function handleImageChange(e) {
-        if (e.target.files.length) {
-            const rawImage = e.target.files[0];
-    
-            const reader = new FileReader();
-    
-            reader.onload = function(event) {
-                // Convert image data to base64
-                const base64Data = event.target.result;
-    
-                // Set base64 data to the 'raw' key
-                setImage({
-                    preview: URL.createObjectURL(rawImage),
-                    raw: base64Data
-                });
-            };
-    
-            // Read the file as data URL (base64)
-            reader.readAsDataURL(rawImage);
-        } else {
-            // If no image is selected, reset the image state
-            setImage({
-                preview: '', // Reset preview to an empty string
-                raw: '',
-            });
-        }
-    }
     const {
         data: existingTags,
     } = useGetTagsQuery('getTags')
+
 
     function handleKeyDown(e){
         if(e.key !== 'Enter') return 
@@ -71,18 +42,45 @@ const AddPostForm = () => {
     const onTitleChanged = e => setTitle(e.target.value)
     const onContentChanged = e => setContent(e.target.value)
 
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        setFile(file);
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewUrl(reader.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setPreviewUrl(null);
+        }
+    };
+
 
     const canSave = [title, content].every(Boolean) && tags.length > 0 && !isLoading;
 
     const onSavePostClicked = async () => {
         
         if (canSave) {
+            console.log(file)
             try {
-                const newPostData = await addNewPost({ title, body: content , tags}).unwrap()
+                // Create a FormData object
+                const formData = new FormData()
+                formData.append('title', title)
+                formData.append('body', content)
+                formData.append('tags', JSON.stringify(tags))
+
+                // Append file if it exists
+                if (file) {
+                    formData.append('file', file)
+                }
+
+                const newPostData = await addNewPost(formData).unwrap()
                 console.log(newPostData)
                 setTitle('')
                 setContent('')
                 setTags([])
+                setFile(null)
                 navigate('/')
             } catch (err) {
                 console.error('Failed to save the post', err)
@@ -129,15 +127,21 @@ const AddPostForm = () => {
                 </div>
 
                 <label>Add Image:</label>
-                {image.preview && <img 
-                    src={image.preview} 
-                    alt="none"
-                />}
-                <input 
-                    name="image"
-                    type="file" 
-                    onChange={handleImageChange} 
-                />
+                {previewUrl && (
+                        
+                            <img
+                                src={previewUrl}
+                                alt="Image Preview"
+                                className={styles.imagePreview}
+                            />
+                       
+                    )}
+                <div>
+                    <input 
+                        type="file" 
+                        onChange={handleFileChange}
+                    />
+                </div>
 
                 <button
                     type="button"

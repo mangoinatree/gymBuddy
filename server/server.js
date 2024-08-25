@@ -6,6 +6,8 @@ const { logger, logEvents } = require('./middleware/logger')
 const errorHandler = require('./middleware/errorHandler')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
+const multer = require('multer')
+const postsController = require('./controllers/postsController')
 const corsOptions = require('./config/corsOptions')
 const connectDB = require('./config/dbConn')
 const mongoose = require('mongoose')
@@ -20,15 +22,30 @@ app.use(logger)
 app.use(cors(corsOptions))
 // built-in middleware
 app.use(express.json())
+app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
 //third- party middleware
 app.use(cookieParser())
+
+// Set up Multer storage
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/images')
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
+
+const upload = multer({ storage });
+
+// Handle file uploads with post creation
+app.post('/posts', upload.single('file'), postsController.createNewPost)
 
 // __dirname looks inside of the folder we are in
 // where to find static files  
 app.use('/', express.static(path.join(__dirname, 'public')))
 
 app.use('/', require('./routes/root'))
-app.use('/users', require('./routes/userRoutes'))
 app.use('/posts', require('./routes/postRoutes'))
 app.use('/quotes', require('./routes/quoteRoutes'))
 app.use('/tags', require('./routes/tagRoutes'))

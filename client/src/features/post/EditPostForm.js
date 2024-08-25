@@ -28,38 +28,23 @@ const EditPostForm = () => {
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
     const [tags, setTags] = useState([])
-    const [image, setImage] = useState({
-        preview: '',
-        raw: '',
-    });
+    const [file, setFile] = useState(null)
+    const [previewUrl, setPreviewUrl] = useState(null)
 
-    function handleImageChange(e) {
-        if (e.target.files.length) {
-            const rawImage = e.target.files[0];
-
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        setFile(file);
+        if (file) {
             const reader = new FileReader();
-
-            reader.onload = function (event) {
-                // Convert image data to base64
-                const base64Data = event.target.result;
-
-                // Set base64 data to the 'raw' key
-                setImage({
-                    preview: URL.createObjectURL(rawImage),
-                    raw: base64Data
-                });
+            reader.onloadend = () => {
+                setPreviewUrl(reader.result);
             };
-
-            // Read the file as data URL (base64)
-            reader.readAsDataURL(rawImage);
+            reader.readAsDataURL(file);
         } else {
-            // If no image is selected, reset the image state
-            setImage({
-                preview: '', // Reset preview to an empty string
-                raw: '',
-            });
+            setPreviewUrl(null);
         }
-    }
+    };
+
 
     const {
         data: existingTags,
@@ -87,15 +72,11 @@ const EditPostForm = () => {
             setTitle(post.title)
             setContent(post.body)
             setTags(post.tags)
-            if (post.image) {
-                setImage({
-                    preview: post.image.preview || '',
-                    raw: post.image.raw || '',
-                });
-            }
+            setPreviewUrl(`http://localhost:3500${post.filePath.replace('/public', '')}`)
+            
 
         }
-    }, [isSuccess, post?.title, post?.body, post?.tags, post?.image])
+    }, [isSuccess, post?.title, post?.body, post?.tags])
 
     if (isLoadingPosts) return <p>Loading...</p>
 
@@ -117,7 +98,7 @@ const EditPostForm = () => {
     const onSavePostClicked = async () => {
         if (canSave) {
             try {
-                await updatePost({ id: post?.id, title, body: content, tags, image }).unwrap()
+                await updatePost({ id: post?.id, title, body: content, tags, file }).unwrap()
 
                 setTitle('')
                 setContent('')
@@ -183,14 +164,19 @@ const EditPostForm = () => {
                 </div>
 
                 <label>Add Image:</label>
-                {<img
-                    src={image.raw}
-                    alt="none"
-                />}
+                {previewUrl && (
+                        
+                        <img
+                            src={previewUrl}
+                            alt="Image Preview"
+                            className={styles.imagePreview}
+                        />
+                   
+                )}
                 <input
                     name="image"
                     type="file"
-                    onChange={handleImageChange}
+                    onChange={handleFileChange}
                 />
                 <div className={styles.cancelSave}>
                     <button
