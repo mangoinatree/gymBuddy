@@ -11,7 +11,11 @@ export const tagsApiSlice = apiSlice.injectEndpoints({
         getTags: builder.query({
             query: () => '/tags',
             transformResponse: responseData => {
-                const sortedTags = responseData.sort((a, b) => a.name.localeCompare(b.name));
+                const loadedTags = responseData.map(tag => {
+                    tag.id = tag._id
+                    return tag
+                });
+                const sortedTags = loadedTags.sort((a, b) => a.name.localeCompare(b.name));
                 return tagsAdapter.setAll(initialState, sortedTags)
             },
             providesTags: (result, error, arg) => [

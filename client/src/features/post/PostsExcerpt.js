@@ -1,6 +1,6 @@
 import TimeAgo from "./TimeAgo";
 import { Link } from 'react-router-dom';
-import { useGetPostsQuery } from './postsSlice'
+import { useGetPostsQuery } from './postsApiSlice'
 import { useState } from "react";
 import styles from './postExcerpt.module.css'
 import React from "react";
@@ -46,11 +46,10 @@ const PostsExcerpt = ({ postId }) => {
                         </React.Fragment>
                     ))}
                 </p>
-
             </div>
 
             <div>
-                {post.image && <img src={post.image.raw} alt="uploaded"></img>}
+                {post.filePath && <img src={`http://localhost:3500${post.filePath.replace('/public', '')}`} alt="uploaded"></img>}
             </div>
 
 

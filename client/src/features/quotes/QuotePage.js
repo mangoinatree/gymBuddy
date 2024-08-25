@@ -1,5 +1,5 @@
 import React from 'react'
-import { useGetQuotesQuery } from './quotesSlice'
+import { useGetQuotesQuery } from './quotesApiSlice'
 import styles from './quote.module.css'
 
 const QuotePage = () => {

@@ -11,7 +11,11 @@ export const quotesApiSlice = apiSlice.injectEndpoints({
         getQuotes: builder.query({
             query: () => '/quotes',
             transformResponse: responseData =>{
-                return quotesAdapter.setAll(initialState, responseData)
+                const loadedQuotes = responseData.map(quote => {
+                    quote.id = quote._id
+                    return quote
+                });
+                return quotesAdapter.setAll(initialState, loadedQuotes)
             }
         })
     })
